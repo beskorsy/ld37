@@ -23,8 +23,11 @@ public abstract class MovingObject : MonoBehaviour {
         movement.Set(h, v, 0f);
         
         movement = movement.normalized * speed * Time.deltaTime;
+
+        boxCollider.enabled = false;
         RaycastHit2D hit = Physics2D.Linecast(transform.position, transform.position + movement, blockingLayer);
 
+        boxCollider.enabled = true;
 
         if (hit.transform == null)
             rb2D.MovePosition(transform.position + movement);
