@@ -4,7 +4,7 @@ using System.Collections;
 public class Enemy : MovingObject
 {
     public int hp = 100;
-    public float timeBetweenSlash = 0.25f;
+    public float timeBetweenSlash = 0.6f;
     public Sprite attackSprite;
     public Sprite sprite;
 
@@ -51,7 +51,7 @@ public class Enemy : MovingObject
         if (hp <= 0)
         {
             Destroy(gameObject);
-            GameManager.instance.enemiesCount--;
+            GameManager.instance.OnEnemyDestroy();
         }
     }
 

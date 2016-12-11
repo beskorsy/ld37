@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class Player : MovingObject {
@@ -7,9 +8,14 @@ public class Player : MovingObject {
     public Sprite attackSprite;
     public Sprite sprite;
     public int hp = 100;
+    public Text hpText;
+    public Image damageImage;
+    public float flashSpeed = 5f;
+    public Color flashColour = new Color(1f, 0f, 0f, 0.1f);
 
     private float timer;
     private SpriteRenderer spriteRenderer;
+    private bool damaged;
 
 
     void Awake () {
@@ -18,6 +24,16 @@ public class Player : MovingObject {
 
     private void Update()
     {
+        if (damaged)
+        {
+            damageImage.color = flashColour;
+        }
+        else
+        {
+            damageImage.color = Color.Lerp(damageImage.color, Color.clear, flashSpeed * Time.deltaTime);
+        }
+        damaged = false;
+
         timer += Time.deltaTime;
         if (Input.GetKeyDown(KeyCode.Space) && timer >= timeBetweenSlash)
             PlayerSlash();
@@ -57,6 +73,10 @@ public class Player : MovingObject {
     public void Damage(int value)
     {
         hp -= value;
+
+        hpText.text = "HP: " + hp;
+
+        damaged = true;
 
         if (hp <= 0)
         {

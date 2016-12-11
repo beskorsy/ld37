@@ -52,9 +52,10 @@ public class Slash : MonoBehaviour
 
         foreach (Collider2D hit in colliders)
         {
-            if (hit.GetComponent<Player>())
+            Player player = hit.GetComponent<Player>();
+            if (player!=  null && player.hp>0)
             {
-                hit.GetComponent<Player>().Damage(damage);
+                player.Damage(damage);
                 return true;
             }
         }
