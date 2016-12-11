@@ -73,14 +73,14 @@ public class GameManager : MonoBehaviour
 
     void InitGame()
     {
-        doingSetup = true;
+        doingSetup = false; 
 
-        levelImage = GameObject.Find("LevelImage");
-        levelText = GameObject.Find("LevelText").GetComponent<Text>();
-        if (level > 1)
-            levelText.text = "Room " + level; 
-        levelImage.SetActive(true);
-        Invoke("HideLevelImage", levelStartDelay);
+       // levelImage = GameObject.Find("LevelImage");
+        //levelText = GameObject.Find("LevelText").GetComponent<Text>();
+       // if (level > 1)
+        //    levelText.text = "Room " + level; 
+       // levelImage.SetActive(true);
+       // Invoke("HideLevelImage", levelStartDelay);
 
         scoreText = GameObject.Find("ScoreText").GetComponent<Text>();
         maxEnemy = level * 2 + 1;

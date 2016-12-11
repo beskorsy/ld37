@@ -52,6 +52,11 @@ public class Player : MovingObject {
         {
             
         }
+        else if(collision.gameObject.CompareTag("Health"))
+        {
+            Destroy(collision.gameObject);
+            RestorHP(10);
+        }
     }
 
     private void PlayerSlash()
@@ -81,7 +86,13 @@ public class Player : MovingObject {
         if (hp <= 0)
         {
             Destroy(gameObject);
-            GameManager.instance.enemiesCount--;
         }
+    }
+
+    public void RestorHP(int value)
+    {
+        hp += value;
+
+        hpText.text = "HP: " + hp;
     }
 }
