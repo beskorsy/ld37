@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
 
     public float levelStartDelay = 2f;
     public static GameManager instance = null;
-    public GameObject enemy;
+    public GameObject[] enemys;
     public float spawnTime = 2f;
     [HideInInspector]
     public int enemiesCount;
@@ -37,11 +37,6 @@ public class GameManager : MonoBehaviour
         doors = new List<Door>();
         
         player = GameObject.FindGameObjectWithTag("Player").GetComponents<Player>()[0];
-    }
-
-    private void Start()
-    {
-        Invoke("MenuOut", 3f);
     }
 
     void HideLevelImage()
@@ -95,6 +90,8 @@ public class GameManager : MonoBehaviour
 
     public void OnOpenDoorOut(Door scrip)
     {
+        if (player.isDead) return; 
+
         int doorIndex = Random.Range(0, doors.Count);
         Door nextDoor = doors[doorIndex];
         nextDoor.OnOpenDoorIn();
@@ -112,6 +109,7 @@ public class GameManager : MonoBehaviour
             Vector2 spawnDoorPos = spawnDoor.transform.position;
             enemiesCount++;
 
+            GameObject enemy = enemys[Random.Range(0, enemys.Length)];
             Instantiate(enemy, spawnDoorPos, Quaternion.identity);
         }
     }

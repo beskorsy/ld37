@@ -2,24 +2,35 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class Player : MovingObject {
+public class Player : MovingObject
+{
 
-    public float timeBetweenSlash = 0.25f;
-    public Sprite attackSprite;
-    public Sprite sprite;
+    public float timeBetweenSlash;
     public int hp = 100;
     public Text hpText;
     public Image damageImage;
     public float flashSpeed = 5f;
     public Color flashColour = new Color(1f, 0f, 0f, 0.1f);
+    [HideInInspector]
+    public bool isDead;
 
-    private float timer;
+    private float timer = 0f;
     private SpriteRenderer spriteRenderer;
     private bool damaged;
+    private AudioSource drinkAudio;
+    private AudioSource slashAudio;
+    private Animator anim;
 
 
-    void Awake () {
+    void Awake()
+    {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        anim = GetComponent<Animator>();
+
+        AudioSource[] sounds = GetComponents<AudioSource>();
+        drinkAudio = sounds[0];
+        slashAudio = sounds[1];
+        timer = timeBetweenSlash;
     }
 
     private void Update()
@@ -34,25 +45,31 @@ public class Player : MovingObject {
         }
         damaged = false;
 
-        timer += Time.deltaTime;
-        if (Input.GetKeyDown(KeyCode.Space) && timer >= timeBetweenSlash)
-            PlayerSlash();
+
     }
 
-    void FixedUpdate  () {
+    void FixedUpdate()
+    {
+        if (isDead) return;
+
+        timer += Time.deltaTime;
+        if (Input.GetKey(KeyCode.Space) && timer >= 0.4f)
+            PlayerSlash();
+
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
+
+        if (h == 0 && v == 0)
+            anim.SetBool("Walk", true);
+        else
+            anim.SetBool("Walk", false);
 
         Move(h, v);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Door"))
-        {
-            
-        }
-        else if(collision.gameObject.CompareTag("Health"))
+        if (collision.gameObject.CompareTag("Health"))
         {
             Destroy(collision.gameObject);
             RestorHP(10);
@@ -62,17 +79,10 @@ public class Player : MovingObject {
     private void PlayerSlash()
     {
         timer = 0f;
-        spriteRenderer.sprite = attackSprite;
-        Invoke("SlashOut", 0.1f);
+        anim.SetTrigger("Slash");
+        slashAudio.Play();
 
-        Slash.ActionPlayer(transform.position, 0.4f, 50, true);
-
-       // if (gameObject.CompareTag(""))
-    }
-
-    private void SlashOut()
-    {
-        spriteRenderer.sprite = sprite;
+        Slash.ActionPlayer(transform.position, 0.3f, 50, true);
     }
 
     public void Damage(int value)
@@ -85,13 +95,15 @@ public class Player : MovingObject {
 
         if (hp <= 0)
         {
-            Destroy(gameObject);
+            isDead = true;
+            anim.SetTrigger("Dead");
         }
     }
 
     public void RestorHP(int value)
     {
         hp += value;
+        drinkAudio.Play();
 
         hpText.text = "HP: " + hp;
     }

@@ -4,30 +4,34 @@ using System.Collections;
 public class Enemy : MovingObject
 {
     public int hp = 100;
-    public float timeBetweenSlash = 0.6f;
-    public Sprite attackSprite;
-    public Sprite sprite;
+    public float timeBetweenSlash;
 
     private Transform target;
     private SpriteRenderer spriteRenderer;
     private float timer;
+    private Animator anim;
+    private bool isDead;
+
 
     // Use this for initialization
     void Awake()
     {
+
+        anim = GetComponent<Animator>();
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null) {
             target = GameObject.FindGameObjectWithTag("Player").transform;
         }
         spriteRenderer = GetComponent<SpriteRenderer>();
+        speed = 1f;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         float xDir = 0;
         float yDir = 0;
 
-        if (target != null)
+        if (target != null && !isDead)
         {
             if (Mathf.Abs(target.position.y - transform.position.y) > 0.3f)
                 yDir = target.position.y > transform.position.y ? 1 : -1;
@@ -35,10 +39,23 @@ public class Enemy : MovingObject
             if (Mathf.Abs(target.position.x - transform.position.x) > 0.3f)
                 xDir = target.position.x > transform.position.x ? 1 : -1;
 
+            /**
+            boxCollider.enabled = false;
+            RaycastHit2D hit = Physics2D.Linecast(transform.position, transform.position + new Vector3(0.1f, 0.1f, 0), blockingLayer);
+            boxCollider.enabled = true;
+            if (hit.transform != null)
+            {
+                r = true;
+                xDir = - 5;
+                yDir =  -5;
+            }
+    **/
+
             if (xDir != 0 || yDir != 0)
                 Move(xDir, yDir);
 
             timer += Time.deltaTime;
+
             if (timer >= timeBetweenSlash)
                 TrySlash();
         }
@@ -46,22 +63,28 @@ public class Enemy : MovingObject
 
     public void Damage(int value)
     {
+        if (isDead) return;
+
         hp -= value;
 
         if (hp <= 0)
         {
-            Destroy(gameObject);
+            isDead = true;
+            Invoke("Dead", 0.5f);
             GameManager.instance.OnEnemyDestroy();
         }
     }
 
+    private void Dead()
+    {
+        anim.SetTrigger("Dead");
+    }
+
     private void TrySlash()
     {
-        if (Slash.TryActionEnemy(transform.position, 0.3f, 10))
+        if (Slash.TryActionEnemy(transform.position, 0.15f, 10))
         {
             timer = 0f;
-            spriteRenderer.sprite = attackSprite;
-            Invoke("SlashOut", 0.1f);
         }
     }
 }
