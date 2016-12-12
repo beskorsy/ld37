@@ -18,6 +18,7 @@ public class Player : MovingObject
     private bool damaged;
     private AudioSource drinkAudio;
     private AudioSource slashAudio;
+    private AudioSource wilhelmAudio;
     private Animator anim;
 
     private Vector2 input = Vector2.zero;
@@ -31,6 +32,7 @@ public class Player : MovingObject
         AudioSource[] sounds = GetComponents<AudioSource>();
         drinkAudio = sounds[0];
         slashAudio = sounds[1];
+        wilhelmAudio = sounds[2];
         timer = timeBetweenSlash;
     }
 
@@ -97,6 +99,7 @@ public class Player : MovingObject
         {
             isDead = true;
             anim.SetTrigger("Dead");
+            wilhelmAudio.Play();
 
             Invoke("GameOver", 3f);
         }

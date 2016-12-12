@@ -2,11 +2,7 @@
 
 public class Door : MonoBehaviour
 {
-    public float closeTime = 1f;
-
     private BoxCollider2D boxCollider;
-    private bool needOpen;
-    private AudioSource doorAudio;
 
     [SerializeField]
     Vector2 rotationVector = Vector2.up;
@@ -16,7 +12,6 @@ public class Door : MonoBehaviour
     private void Awake()
     {
         boxCollider = GetComponent<BoxCollider2D>();
-        doorAudio = GetComponent<AudioSource>();
 
         InvalidateRotationVector();
     }
@@ -29,21 +24,13 @@ public class Door : MonoBehaviour
     void OnTriggerEnter2D(Collider2D collision) { CheckCollision(collision); }
     void OnTriggerStay2D(Collider2D collision) { CheckCollision(collision); }
 
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        needOpen = false;
-    }
 
 
     private void OnOpenDoorOut()
     {
-        if (needOpen) {
-            doorAudio.Play();
-            GameManager.instance.OnOpenDoorOut(this);
-        }
+            GameManager.instance.OnOpenDoor(this);
     }
-
-   
+      
 
     void Ready()
     {
@@ -53,11 +40,10 @@ public class Door : MonoBehaviour
     void CheckCollision(Collider2D collision)
     {
         if (!boxCollider.enabled || GameManager.instance.isDlgShow) return;
-        if (collision.gameObject.CompareTag("Player") && !needOpen) {
+        if (collision.gameObject.CompareTag("Player") ) {
             var playerMovement = collision.gameObject.GetComponent<Player>().inputVector;
             var dot = Vector2.Dot(playerMovement, rotationVector);
             if (dot < 0) {
-                needOpen = true;
                 OnOpenDoorOut();
             }
         }

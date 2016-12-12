@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     private int score;
     private int maxEnemy;
     private bool readyToRestart;
+    private AudioSource doorAudio;
 
 
     void Awake()
@@ -38,6 +39,7 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
 
         DontDestroyOnLoad(gameObject);
+        doorAudio = GetComponent<AudioSource>();
 
         doors = new List<Door>();
     }
@@ -102,6 +104,7 @@ public class GameManager : MonoBehaviour
 
     void HideLevelImage()
     {
+        doorAudio.Play();
         levelImage.SetActive(false);
         isDlgShow = false;
     }
@@ -111,10 +114,11 @@ public class GameManager : MonoBehaviour
         doors.Add(script);
     }
 
-    public void OnOpenDoorOut(Door script)
+    public void OnOpenDoor(Door script)
     {
         if (player.isDead) return;
 
+        doorAudio.Play();
         if (TryNextLevel()) return;
 
         doors.Remove(script);
@@ -139,7 +143,7 @@ public class GameManager : MonoBehaviour
         } else
         {
             float r = Random.Range(0, doors.Count);
-            if (r <= 2)
+            if (r <= 1/level)
             {
                 OpenNextLevel();
                 return true;

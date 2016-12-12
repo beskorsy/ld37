@@ -53,7 +53,7 @@ public class Slash : MonoBehaviour
         foreach (Collider2D hit in colliders)
         {
             Player player = hit.GetComponent<Player>();
-            if (player!=  null && player.hp>0)
+            if (player != null && player.hp > 0)
             {
                 player.Damage(damage);
                 return true;
