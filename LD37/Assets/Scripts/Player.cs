@@ -23,6 +23,8 @@ public class Player : MovingObject
 
     private Vector2 input = Vector2.zero;
 
+    public Vector2 inputVector { get { return input; } }
+
     void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
