@@ -7,7 +7,6 @@ public class Enemy : MovingObject
     public float timeBetweenSlash;
 
     private Transform target;
-    private SpriteRenderer spriteRenderer;
     private float timer;
     private Animator anim;
     private bool isDead;
@@ -21,7 +20,6 @@ public class Enemy : MovingObject
         if (player != null) {
             target = GameObject.FindGameObjectWithTag("Player").transform;
         }
-        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     void FixedUpdate()
@@ -29,7 +27,7 @@ public class Enemy : MovingObject
         float xDir = 0;
         float yDir = 0;
 
-        if (target != null && !isDead)
+        if (target != null && !isDead && !GameManager.instance.isDlgShow)
         {
             if (Mathf.Abs(target.position.y - transform.position.y) > 0.3f)
                 yDir = target.position.y > transform.position.y ? 1 : -1;

@@ -15,7 +15,6 @@ public class Player : MovingObject
     public bool isDead;
 
     private float timer = 0f;
-    private SpriteRenderer spriteRenderer;
     private bool damaged;
     private AudioSource drinkAudio;
     private AudioSource slashAudio;
@@ -27,7 +26,6 @@ public class Player : MovingObject
 
     void Awake()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
 
         AudioSource[] sounds = GetComponents<AudioSource>();
@@ -38,6 +36,8 @@ public class Player : MovingObject
 
     private void Update()
     {
+        if (isDead || GameManager.instance.isDlgShow) return;
+
         if (damaged)
         {
             damageImage.color = flashColour;
@@ -46,10 +46,9 @@ public class Player : MovingObject
         {
             damageImage.color = Color.Lerp(damageImage.color, Color.clear, flashSpeed * Time.deltaTime);
         }
+        
         damaged = false;
-
-        if (isDead) return;
-
+        
         timer += Time.deltaTime;
         if (Input.GetKey(KeyCode.Space) && timer >= 0.4f)
             PlayerSlash();
@@ -64,7 +63,7 @@ public class Player : MovingObject
 
     void FixedUpdate()
     {
-        if (Mathf.Approximately(input.magnitude, 0)) return;
+        if (isDead || Mathf.Approximately(input.magnitude, 0) || GameManager.instance.isDlgShow) return;
         Move2(input.normalized);
     }
 
@@ -98,6 +97,8 @@ public class Player : MovingObject
         {
             isDead = true;
             anim.SetTrigger("Dead");
+
+            Invoke("GameOver", 3f);
         }
     }
 
@@ -107,5 +108,10 @@ public class Player : MovingObject
         drinkAudio.Play();
 
         hpText.text = "HP: " + hp;
+    }
+
+    private void GameOver()
+    {
+        GameManager.instance.GameOverDlg();
     }
 }

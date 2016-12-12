@@ -43,11 +43,7 @@ public class Door : MonoBehaviour
         }
     }
 
-    public void OnOpenDoorIn()
-    {
-        boxCollider.enabled = false;
-        Invoke("Ready", closeTime);
-    }
+   
 
     void Ready()
     {
@@ -56,7 +52,7 @@ public class Door : MonoBehaviour
 
     void CheckCollision(Collider2D collision)
     {
-        if (!boxCollider.enabled) return;
+        if (!boxCollider.enabled || GameManager.instance.isDlgShow) return;
         if (collision.gameObject.CompareTag("Player") && !needOpen) {
             var playerMovement = collision.gameObject.GetComponent<Player>().inputVector;
             var dot = Vector2.Dot(playerMovement, rotationVector);
