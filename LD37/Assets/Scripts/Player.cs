@@ -21,6 +21,7 @@ public class Player : MovingObject
     private AudioSource slashAudio;
     private Animator anim;
 
+    private Vector2 input = Vector2.zero;
 
     void Awake()
     {
@@ -45,11 +46,6 @@ public class Player : MovingObject
         }
         damaged = false;
 
-
-    }
-
-    void FixedUpdate()
-    {
         if (isDead) return;
 
         timer += Time.deltaTime;
@@ -59,12 +55,15 @@ public class Player : MovingObject
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
 
-        if (h == 0 && v == 0)
-            anim.SetBool("Walk", true);
-        else
-            anim.SetBool("Walk", false);
+        anim.SetBool("Walk", !Mathf.Approximately(0, h) || !Mathf.Approximately(0, v));
+        input.x = h;
+        input.y = v;
+    }
 
-        Move(h, v);
+    void FixedUpdate()
+    {
+        if (Mathf.Approximately(input.magnitude, 0)) return;
+        Move2(input, Time.fixedDeltaTime);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

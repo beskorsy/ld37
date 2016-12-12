@@ -1,19 +1,18 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public abstract class MovingObject : MonoBehaviour
 {
     public float speed = 6f;
     public LayerMask blockingLayer;
 
-    protected BoxCollider2D boxCollider;
+    protected Collider2D collider;
     private Rigidbody2D rb2D;
     private Vector3 movement;
 
     // Use this for initialization
     protected virtual void Start()
     {
-        boxCollider = GetComponent<BoxCollider2D>();
+        collider = GetComponent<Collider2D>();
         rb2D = GetComponent<Rigidbody2D>();
     }
 
@@ -26,10 +25,10 @@ public abstract class MovingObject : MonoBehaviour
 
         movement = movement.normalized * speed * Time.deltaTime;
 
-        boxCollider.enabled = false;
+        collider.enabled = false;
         RaycastHit2D hit = Physics2D.Linecast(transform.position, transform.position + movement, blockingLayer);
 
-        boxCollider.enabled = true;
+        collider.enabled = true;
 
         if (hit.transform == null) {
             Vector3 diff = movement;
@@ -43,5 +42,15 @@ public abstract class MovingObject : MonoBehaviour
 
             rb2D.MovePosition(transform.position + movement);
         }
+    }
+
+    protected void Move2(Vector2 movement, float dt)
+    {
+        rb2D.AddForce(movement * speed * dt, ForceMode2D.Force);
+        //Debug.Log("move2 by " + (movement * speed * dt).ToString());
+
+        float rot_z = (Mathf.Atan2(movement.y, movement.x) * Mathf.Rad2Deg);
+        Quaternion newRot = Quaternion.Euler(new Vector3(0, 0, rot_z + 90));
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, newRot, Time.deltaTime * 1500f);
     }
 }
