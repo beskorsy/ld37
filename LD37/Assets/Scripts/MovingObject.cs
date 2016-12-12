@@ -44,10 +44,9 @@ public abstract class MovingObject : MonoBehaviour
         }
     }
 
-    protected void Move2(Vector2 movement, float dt)
+    protected void Move2(Vector2 movement)
     {
-        rb2D.AddForce(movement * speed * dt, ForceMode2D.Force);
-        //Debug.Log("move2 by " + (movement * speed * dt).ToString());
+        rb2D.AddForce(movement * speed * Time.fixedDeltaTime, ForceMode2D.Force);
 
         float rot_z = (Mathf.Atan2(movement.y, movement.x) * Mathf.Rad2Deg);
         Quaternion newRot = Quaternion.Euler(new Vector3(0, 0, rot_z + 90));

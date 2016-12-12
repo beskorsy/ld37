@@ -65,7 +65,7 @@ public class Player : MovingObject
     void FixedUpdate()
     {
         if (Mathf.Approximately(input.magnitude, 0)) return;
-        Move2(input, Time.fixedDeltaTime);
+        Move2(input.normalized);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

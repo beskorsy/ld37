@@ -16,14 +16,12 @@ public class Enemy : MovingObject
     // Use this for initialization
     void Awake()
     {
-
         anim = GetComponent<Animator>();
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null) {
             target = GameObject.FindGameObjectWithTag("Player").transform;
         }
         spriteRenderer = GetComponent<SpriteRenderer>();
-        speed = 1f;
     }
 
     void FixedUpdate()
@@ -51,10 +49,11 @@ public class Enemy : MovingObject
             }
     **/
 
-            if (xDir != 0 || yDir != 0)
-                Move(xDir, yDir);
+            if (xDir != 0 || yDir != 0) {
+                Move2(new Vector2(xDir, yDir).normalized);
+            }
 
-            timer += Time.deltaTime;
+            timer += Time.fixedDeltaTime;
 
             if (timer >= timeBetweenSlash)
                 TrySlash();
@@ -70,7 +69,7 @@ public class Enemy : MovingObject
         if (hp <= 0)
         {
             isDead = true;
-            Invoke("Dead", 0.5f);
+            Dead();
             GameManager.instance.OnEnemyDestroy();
         }
     }
@@ -78,6 +77,7 @@ public class Enemy : MovingObject
     private void Dead()
     {
         anim.SetTrigger("Dead");
+        collider.enabled = false;
     }
 
     private void TrySlash()
