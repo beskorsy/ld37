@@ -11,6 +11,9 @@ public class GameManager : MonoBehaviour
     public static GameManager instance = null;
     public GameObject[] enemys;
     public float spawnTime = 2f;
+    public Sprite menuSprite;
+    public Sprite winSprite;
+    public Sprite loseSprite;
 
     [HideInInspector]
     public int enemiesCount;
@@ -23,6 +26,7 @@ public class GameManager : MonoBehaviour
     private Text scoreMenuText;
     private GameObject levelImage;
     private List<Door> doors;
+    private List<GameObject> enemyPoints;
     private Player player;
     private int level = 1;
     private int score;
@@ -42,6 +46,7 @@ public class GameManager : MonoBehaviour
         doorAudio = GetComponent<AudioSource>();
 
         doors = new List<Door>();
+        enemyPoints = new List<GameObject>();
     }
 
     private void Update()
@@ -81,25 +86,27 @@ public class GameManager : MonoBehaviour
         enemiesCount = 0;
         maxEnemy = level * 3 + 1;
         InvokeRepeating("TrySpawnEnemy", 0f, spawnTime);
+        enemyPoints.Clear();
         doors.Clear();
     }
 
     public void InitUI()
     {
         levelImage = GameObject.Find("LevelImage");
+        levelImage.GetComponentInChildren<Image>().sprite = menuSprite;
         levelText = GameObject.Find("LevelText").GetComponent<Text>();
         keysText = GameObject.Find("KeysText").GetComponent<Text>();
         scoreMenuText = GameObject.Find("ScoreMenuText").GetComponent<Text>();
         if (level > 1)
         {
-            levelText.text = "Room " + level;
+            levelText.text = "ROOM " + level;
         }
-        keysText.text = "WASD - Move\n SPASE - Hit";
+        keysText.text = "WASD - MOVE\n SPASE - HIT";
         levelImage.SetActive(true);
         Invoke("HideLevelImage", levelStartDelay);
 
         scoreText = GameObject.Find("ScoreText").GetComponent<Text>();
-        scoreText.text = "Score: " + score;
+        scoreText.text = "SCORE: " + score;
     }
 
     void HideLevelImage()
@@ -112,6 +119,16 @@ public class GameManager : MonoBehaviour
     public void AddDoorToList(Door script)
     {
         doors.Add(script);
+    }
+
+    public void AddEnemyPointToList(EnemyPoint script)
+    {
+        enemyPoints.Add(script.gameObject);
+    }
+
+    public List<GameObject> GetEnemyPointList()
+    {
+        return enemyPoints;
     }
 
     public void OnOpenDoor(Door script)
@@ -140,10 +157,15 @@ public class GameManager : MonoBehaviour
         {
             OpenNextLevel();
             return true;
-        } else
+        }
+        else if (doors.Count > 20)
+        {
+            return false;
+        }
+        else
         {
             float r = Random.Range(0, doors.Count);
-            if (r <= 1/level)
+            if (r <= 1 / level)
             {
                 OpenNextLevel();
                 return true;
@@ -154,7 +176,7 @@ public class GameManager : MonoBehaviour
 
     private void OpenNextLevel()
     {
-        if (level >= 2)
+        if (level >= 6)
         {
             WinDlg();
         }
@@ -168,9 +190,10 @@ public class GameManager : MonoBehaviour
     private void WinDlg()
     {
         isDlgShow = true;
-        levelText.text = "Win!";
-        scoreMenuText.text = "Score: " + score;
-        keysText.text = "R - Restart";
+        levelText.text = "";
+        scoreMenuText.text = "SCORE: " + score;
+        keysText.text = "R - RESTARE";
+        levelImage.GetComponentInChildren<Image>().sprite = winSprite;
 
         levelImage.SetActive(true);
         readyToRestart = true;
@@ -179,9 +202,10 @@ public class GameManager : MonoBehaviour
     public void GameOverDlg()
     {
         isDlgShow = true;
-        levelText.text = "Game Over!";
-        scoreMenuText.text = "Score: " + score;
-        keysText.text = "R - Restart";
+        scoreMenuText.text = "SCORE: " + score;
+        levelText.text = "";
+        keysText.text = "R - RESTARE";
+        levelImage.GetComponentInChildren<Image>().sprite = loseSprite;
 
         levelImage.SetActive(true);
         readyToRestart = true;
@@ -212,6 +236,6 @@ public class GameManager : MonoBehaviour
     {
         enemiesCount--;
         score += 10;
-        scoreText.text = "Score: " + score;
+        scoreText.text = "SCORE: " + score;
     }
 }

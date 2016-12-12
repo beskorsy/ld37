@@ -23,8 +23,7 @@ public class Door : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision) { CheckCollision(collision); }
     void OnTriggerStay2D(Collider2D collision) { CheckCollision(collision); }
-
-
+    
 
     private void OnOpenDoorOut()
     {

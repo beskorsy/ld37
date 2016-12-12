@@ -11,6 +11,7 @@ public class Player : MovingObject
     public Image damageImage;
     public float flashSpeed = 5f;
     public Color flashColour = new Color(1f, 0f, 0f, 0.1f);
+
     [HideInInspector]
     public bool isDead;
 
