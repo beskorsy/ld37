@@ -11,6 +11,7 @@ public class Player : MovingObject
     public Image damageImage;
     public float flashSpeed = 5f;
     public Color flashColour = new Color(1f, 0f, 0f, 0.1f);
+    public VirtualJoistick virtualJoistick;
 
     [HideInInspector]
     public bool isDead;
@@ -56,8 +57,11 @@ public class Player : MovingObject
         if (Input.GetKey(KeyCode.Space) && timer >= 0.4f)
             PlayerSlash();
 
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
+        //float h = Input.GetAxisRaw("Horizontal");
+        //float v = Input.GetAxisRaw("Vertical");
+
+        float h = virtualJoistick.Horizontal();
+        float v = virtualJoistick.Vertical();
 
         anim.SetBool("Walk", !Mathf.Approximately(0, h) || !Mathf.Approximately(0, v));
         input.x = h;
